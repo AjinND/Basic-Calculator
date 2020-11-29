@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     public void number1(View view) {
         t1.setText(t1.getText() + "1");
     }
+
     public void number2(View view) {
         t1.setText(t1.getText() + "2");
     }
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
     public void number0(View view) {
         t1.setText(t1.getText() + "0");
     }
+
+    public void decimal(View view) { t1.setText(t1.getText() + "."); }
 
     /* Add,Sub,Mul,Div */
 
