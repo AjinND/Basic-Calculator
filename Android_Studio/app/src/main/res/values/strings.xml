@@ -10,11 +10,14 @@
     <string name="btn_eight">8</string>
     <string name="btn_nine">9</string>
     <string name="btn_zero">0</string>
+    <string name="btn_two_zero">00</string>
     <string name="btn_plus">+</string>
     <string name="btn_minus">-</string>
-    <string name="btn_multiply">*</string>
-    <string name="btn_divide">/</string>
+    <string name="btn_multiply">×</string>
+    <string name="btn_divide">÷</string>
     <string name="btn_equal">=</string>
     <string name="btn_point">.</string>
-    <string name="btn_del">Clear</string>
+    <string name="btn_del">C</string>
+    <string name="btn_percent">%</string>
+    <string name="btn_backspace">⌫</string>
 </resources>

@@ -7,17 +7,15 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+
+import java.math.BigDecimal;
+
 public class MainActivity extends AppCompatActivity {
-    Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, bplus,bminus,bmul,bdiv,bdot,bdel;
-    TextView t1;
-    final char Add = '+';
-    final char Sub = '-';
-    final char Multiply = '*';
-    final char Divide = '/';
-    final char Equal = '=';
-    char action;
-    double n1=Double.NaN;
-    double n2;
+    Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, b00, bpercent, bplus, bminus, bmul, bdiv, bdot, bdel, backspace;
+    TextView t1, t2;
+    String n1 = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,26 +23,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         b1 = findViewById(R.id.b1);
         b2 = findViewById(R.id.b2);
-        b3 =  findViewById(R.id.b3);
+        b3 = findViewById(R.id.b3);
         b4 = findViewById(R.id.b4);
         b5 = findViewById(R.id.b5);
         b6 = findViewById(R.id.b6);
         b7 = findViewById(R.id.b7);
         b8 = findViewById(R.id.b8);
-        b9 =  findViewById(R.id.b9);
+        b9 = findViewById(R.id.b9);
         b0 = findViewById(R.id.b0);
+        b00 = findViewById(R.id.twozero);
 
         bplus = findViewById(R.id.plus);
         bminus = findViewById(R.id.sub);
         bmul = findViewById(R.id.mul);
         bdiv = findViewById(R.id.div);
+        bpercent = findViewById(R.id.percent);
         bdot = findViewById(R.id.dot);
         bdel = findViewById(R.id.del);
+        backspace = findViewById(R.id.backspace);
 
-        t1 =  findViewById(R.id.text);
+        t1 = findViewById(R.id.inputTtext);
+        t2 = findViewById(R.id.resText);
     }
     /* Display Numbers */
-
     public void number1(View view) {
         t1.setText(t1.getText() + "1");
     }
@@ -85,70 +86,55 @@ public class MainActivity extends AppCompatActivity {
         t1.setText(t1.getText() + "0");
     }
 
-    public void decimal(View view) { t1.setText(t1.getText() + "."); }
-
-    /* Add,Sub,Mul,Div */
-
-    public void add(View view) {
-        calculate();
-        action=Add;
-        t1.setText(null);
-    }
-    public void minus(View view) {
-        calculate();
-        action=Sub;
-        t1.setText(null);
-    }
-    public void multiply(View view) {
-        calculate();
-        action=Multiply;
-        t1.setText(null);
-    }
-    public void divide(View view) {
-        calculate();
-        action=Divide;
-        t1.setText(null);
+    public void doubleZero(View view) {
+        t1.setText(t1.getText() + "00");
     }
 
-    /* Equal */
-
-    public void res(View view) {
-        calculate();
-        action=Equal;
-        t1.setText(String.valueOf(n1));
+    public void decimal(View view) {
+        t1.setText(t1.getText() + ".");
     }
 
-    /* Reset */
+    /* Display Operators */
+    public void add(View view) { t1.setText(t1.getText() + "+"); }
 
+    public void minus(View view) { t1.setText(t1.getText() + "-"); }
+
+    public void multiply(View view) { t1.setText(t1.getText() + "×"); }
+
+    public void divide(View view) { t1.setText(t1.getText() + "÷"); }
+
+    public void percent(View view) { t1.setText(t1.getText() + "%"); }
+
+    /* Reset Screen */
     public void reset(View view) {
-        n1 = Double.NaN;
         t1.setText(null);
+        t2.setText(null);
     }
 
-    /* Calculation */
-
-    public void calculate(){
-        if (!Double.isNaN(n1)) {
-            n2= Double.parseDouble(t1.getText().toString());
-            switch(action){
-                case Add:
-                    n1=n1+n2;
-                    break;
-                case Sub:
-                    n1=n1-n2;
-                    break;
-                case Multiply:
-                    n1=n1*n2;
-                    break;
-                case Divide:
-                    n1=n1/n2;
-                    break;
-                case Equal:
-                    break;
-            }
-        }
-        else{
-            n1=Double.parseDouble(t1.getText().toString());
-        }
+    /* Delete one Character */
+    public void backspace(View view) {
+        int len = t1.getText().length();
+        t1.setText(t1.getText().toString().substring(0, len - 1));
     }
+
+    /* Calculate Result */
+    public void res(View view) {
+        n1 = t1.getText().toString();
+        n1 = n1.replaceAll("×","*");
+        n1 = n1.replaceAll("%","/100");
+        n1 = n1.replaceAll("÷","/");
+
+        Context rhino = Context.enter();
+        rhino.setOptimizationLevel(-1);
+
+        String finalRes = "";
+        try{
+            Scriptable scriptable=rhino.initStandardObjects();
+            finalRes = rhino.evaluateString(scriptable,n1,"javascript",1,null).toString();
+        }catch(Exception e){
+            finalRes = "0";
+        }
+        t2.setText(finalRes);
+    }
+
 }
